@@ -2,8 +2,10 @@ import firebase from 'firebase/app';
 import 'firebase/auth';
 import { clientCredentials } from './client';
 
+const getdbUrl = (path) => `${clientCredentials.databaseURL}${path}`;
+
 const checkUser = (uid) => new Promise((resolve, reject) => {
-  fetch(`${clientCredentials.databaseURL}/checkuser`, {
+  fetch('http://localhost:8000/checkuser', {
     method: 'POST',
     body: JSON.stringify({
       uid,
@@ -44,4 +46,5 @@ export {
   signOut,
   checkUser,
   registerUser,
+  getdbUrl,
 };
