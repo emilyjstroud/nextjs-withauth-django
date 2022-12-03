@@ -31,4 +31,21 @@ const updateEvent = (event) => new Promise((resolve, reject) => {
     .catch(reject);
 });
 
-export { getEvents, createEvent, updateEvent };
+const getSingleEvent = (id) => new Promise((resolve, reject) => {
+  fetch(`${clientCredentials.databaseURL}/events/${id}`, {
+    method: 'GET',
+    body: JSON.stringify(id),
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
+    .then((response) => resolve(response.json()))
+    .catch(reject);
+});
+
+export {
+  getEvents,
+  createEvent,
+  updateEvent,
+  getSingleEvent,
+};

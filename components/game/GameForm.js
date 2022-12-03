@@ -2,9 +2,9 @@ import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
 import { Button, Form } from 'react-bootstrap';
-import { createGame, getGameTypes } from '../../utils/data/gameData';
+import { createGame, getGameTypes, updateGame } from '../../utils/data/gameData';
 
-const GameForm = ({ user }) => {
+const GameForm = ({ user, obj }) => {
   const [gameTypes, setGameTypes] = useState([]);
   /*
   Since the input fields are bound to the values of
@@ -24,7 +24,16 @@ const GameForm = ({ user }) => {
   useEffect(() => {
     // TODO: Get the game types, then set the state
     getGameTypes().then(setGameTypes);
-  }, []);
+    if (obj.id) {
+      setCurrentGame({
+        skillLevel: obj.skill_level,
+        numberOfPlayers: obj.number_of_players,
+        title: obj.title,
+        maker: obj.maker,
+        gameTypeId: obj.game_type,
+      });
+    }
+  }, [obj]);
 
   const handleChange = (e) => {
     // TODO: Complete the onChange function
@@ -47,14 +56,18 @@ const GameForm = ({ user }) => {
       game_type: Number(currentGame.gameTypeId),
       user_id: user.uid,
     };
-
-    // Send POST request to your API
-    createGame(game).then(() => router.push('/games'));
+    if (obj.id) {
+      updateGame(game, obj.id).then(() => router.push('/games'));
+    } else {
+      // Send POST request to your API
+      createGame(game).then(() => router.push('/games'));
+    }
   };
 
   return (
     <>
       <Form onSubmit={handleSubmit}>
+        <h2 className="text-black mt-5">{obj.id ? 'Update' : 'Create'} Game</h2>
         <Form.Group className="mb-3">
           <Form.Label>Title</Form.Label>
           <Form.Control name="title" required value={currentGame.title} onChange={handleChange} />
@@ -85,9 +98,23 @@ const GameForm = ({ user }) => {
   );
 };
 
+// GameForm.propTypes = {
+//   user: PropTypes.shape({
+//     uid: PropTypes.string.isRequired,
+//   }).isRequired,
+// };
+
 GameForm.propTypes = {
+  obj: PropTypes.shape({
+    skill_level: PropTypes.number,
+    number_of_players: PropTypes.number,
+    title: PropTypes.string,
+    maker: PropTypes.string,
+    game_type: PropTypes.number,
+    id: PropTypes.number,
+  }).isRequired,
   user: PropTypes.shape({
-    uid: PropTypes.string.isRequired,
+    uid: PropTypes.string,
   }).isRequired,
 };
 
