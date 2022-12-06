@@ -2,10 +2,10 @@ import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
 import { Button, Form } from 'react-bootstrap';
-import { createEvent } from '../../utils/data/eventData';
+import { createEvent, updateEvent } from '../../utils/data/eventData';
 import { getGames } from '../../utils/data/gameData';
 
-const EventForm = ({ user }) => {
+const EventForm = ({ user, obj }) => {
   const [games, setGames] = useState([]);
   const [currentEvent, setCurrentEvent] = useState({
     description: '',
@@ -18,7 +18,15 @@ const EventForm = ({ user }) => {
 
   useEffect(() => {
     getGames().then(setGames);
-  }, []);
+    if (obj.id) {
+      setCurrentEvent({
+        description: obj.description,
+        date: obj.date,
+        time: obj.time,
+        game: obj.game,
+      });
+    }
+  }, [obj]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -39,12 +47,17 @@ const EventForm = ({ user }) => {
       user_id: user.uid,
     };
 
-    createEvent(event).then(() => router.push('/events'));
+    if (obj.id) {
+      updateEvent(event, obj.id).then(() => router.push('/events'));
+    } else {
+      createEvent(event).then(() => router.push('/events'));
+    }
   };
 
   return (
     <>
       <Form onSubmit={handleSubmit}>
+        <h2 className="text-black mt-5">{obj.id ? 'Update' : 'Create'} Event</h2>
         <Form.Group className="mb-3">
           <Form.Label>Description</Form.Label>
           <Form.Control name="description" required value={currentEvent.description} onChange={handleChange} />
@@ -74,8 +87,15 @@ const EventForm = ({ user }) => {
 };
 
 EventForm.propTypes = {
+  obj: PropTypes.shape({
+    description: PropTypes.string,
+    date: PropTypes.string,
+    time: PropTypes.string,
+    game: PropTypes.number,
+    id: PropTypes.number,
+  }).isRequired,
   user: PropTypes.shape({
-    uid: PropTypes.string.isRequired,
+    uid: PropTypes.string,
   }).isRequired,
 };
 
