@@ -16,7 +16,7 @@ const GameForm = ({ user, obj }) => {
     numberOfPlayers: 0,
     title: '',
     maker: '',
-    gameTypeId: 0,
+    game_type: 0,
   });
 
   const router = useRouter();
@@ -24,15 +24,15 @@ const GameForm = ({ user, obj }) => {
   useEffect(() => {
     // TODO: Get the game types, then set the state
     getGameTypes().then(setGameTypes);
-    if (obj.id) {
-      setCurrentGame({
-        skillLevel: obj.skill_level,
-        numberOfPlayers: obj.number_of_players,
-        title: obj.title,
-        maker: obj.maker,
-        gameTypeId: obj.game_type,
-      });
-    }
+    // if (obj.id) {
+    //   setCurrentGame({
+    //     skillLevel: obj.skill_level,
+    //     numberOfPlayers: obj.number_of_players,
+    //     title: obj.title,
+    //     maker: obj.maker,
+    //     game_type: obj.game_type,
+    //   });
+    // }
   }, [obj]);
 
   const handleChange = (e) => {
@@ -47,18 +47,18 @@ const GameForm = ({ user, obj }) => {
   const handleSubmit = (e) => {
     // Prevent form from being submitted
     e.preventDefault();
-
-    const game = {
-      maker: currentGame.maker,
-      title: currentGame.title,
-      number_of_players: Number(currentGame.numberOfPlayers),
-      skill_level: Number(currentGame.skillLevel),
-      game_type: Number(currentGame.gameTypeId),
-      user_id: user.uid,
-    };
     if (obj.id) {
-      updateGame(game, obj.id).then(() => router.push('/games'));
+      updateGame(currentGame).then(() => router.push('/games'));
     } else {
+      const game = {
+        maker: currentGame.maker,
+        title: currentGame.title,
+        number_of_players: Number(currentGame.numberOfPlayers),
+        skill_level: Number(currentGame.skillLevel),
+        game_type: Number(currentGame.game_type),
+        user_id: user.uid,
+      };
+
       // Send POST request to your API
       createGame(game).then(() => router.push('/games'));
     }
@@ -81,7 +81,7 @@ const GameForm = ({ user, obj }) => {
 
         {/* TODO: create the rest of the input fields */}
         <Form.Label>Game Type</Form.Label>
-        <Form.Select onChange={handleChange} className="mb-3" name="gameTypeId" required>
+        <Form.Select onChange={handleChange} className="mb-3" name="game_type" required>
           <option value="">Select a Game Type</option>
           {gameTypes?.map((gameType) => (
             <option key={gameType.id} value={gameType.id}>

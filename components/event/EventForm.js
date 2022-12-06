@@ -87,7 +87,7 @@ const EventForm = ({ user, obj }) => {
 };
 
 EventForm.propTypes = {
-  obj: PropTypes.shaoe({
+  obj: PropTypes.shape({
     description: PropTypes.string,
     date: PropTypes.string,
     time: PropTypes.string,

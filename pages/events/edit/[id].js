@@ -1,18 +1,18 @@
-// import { useRouter } from 'next/router';
-// import React, { useEffect, useState } from 'react';
-// import EventForm from '../../components/event/EventForm';
+import { useRouter } from 'next/router';
+import React, { useEffect, useState } from 'react';
+import EventForm from '../../../components/event/EventForm';
+import { getSingleEvent } from '../../../utils/data/eventData';
 
-// export default function EditEvent() {
-//   const [editItem, setEditItem] = useState({});
-//   const router = useRouter();
+export default function EditEvent() {
+  const [editItem, setEditItem] = useState({});
+  const router = useRouter();
+  const { id } = router.query;
 
-//   const { id } = router.query;
+  useEffect(() => {
+    getSingleEvent(id).then(setEditItem);
+  }, [id]);
 
-//   useEffect(() => {
-
-//   });
-
-//   return (
-//     <EventForm obj={editItem}
-//   );
-// }
+  return (
+    <EventForm obj={editItem} />
+  );
+}
